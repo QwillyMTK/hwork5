@@ -1,26 +1,20 @@
-from django.contrib import admin
 from django.urls import path
 from product.views import (
-    CategoryListView, CategoryDetailView,
-    ProductListView, ProductDetailView,
-    ReviewListView, ReviewDetailView,
-    ProductReviewsListView, CategoryListWithCountView
+    category_list_create, category_detail,
+    product_list_create, product_detail,
+    review_list_create, review_detail
 )
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-
     # категории
-    path("api/v1/categories/", CategoryListView.as_view(), name="categories-list"),
-    path("api/v1/categories/<int:pk>/", CategoryDetailView.as_view(), name="categories-detail"),
-    path("api/v1/categories/count/", CategoryListWithCountView.as_view(), name="categories-count"),
+    path("api/v1/categories/", category_list_create),
+    path("api/v1/categories/<int:pk>/", category_detail),
 
     # товары
-    path("api/v1/products/", ProductListView.as_view(), name="products-list"),
-    path("api/v1/products/<int:pk>/", ProductDetailView.as_view(), name="products-detail"),
-    path("api/v1/products/reviews/", ProductReviewsListView.as_view(), name="products-reviews"),
+    path("api/v1/products/", product_list_create),
+    path("api/v1/products/<int:pk>/", product_detail),
 
     # отзывы
-    path("api/v1/reviews/", ReviewListView.as_view(), name="reviews-list"),
-    path("api/v1/reviews/<int:pk>/", ReviewDetailView.as_view(), name="reviews-detail"),
+    path("api/v1/reviews/", review_list_create),
+    path("api/v1/reviews/<int:pk>/", review_detail),
 ]

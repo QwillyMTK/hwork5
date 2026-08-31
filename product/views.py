@@ -1,51 +1,121 @@
-from django.db.models import Avg, Count
-from rest_framework import generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 from .models import Category, Product, Review
-from .serializers import (
-    CategorySerializer, ProductSerializer, ReviewSerializer,
-    ProductWithReviewsSerializer, CategoryWithCountSerializer
-)
+from .serializers import CategorySerializer, ProductSerializer, ReviewSerializer
 
-# список категорий
-class CategoryListView(generics.ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+# --- Категории ---
+@api_view(["GET", "POST"])
+def category_list_create(request):
+    if request.method == "GET":
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
 
-# одна категория
-class CategoryDetailView(generics.RetrieveAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    elif request.method == "POST":
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# список товаров
-class ProductListView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
 
-# один товар
-class ProductDetailView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+@api_view(["GET", "PUT", "DELETE"])
+def category_detail(request, pk):
+    try:
+        category = Category.objects.get(pk=pk)
+    except Category.DoesNotExist:
+        return Response({"error": "Категория не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
-# список отзывов
-class ReviewListView(generics.ListAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    if request.method == "GET":
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
 
-# один отзыв
-class ReviewDetailView(generics.RetrieveAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    elif request.method == "PUT":
+        serializer = CategorySerializer(category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# список товаров с отзывами и средним рейтингом
-class ProductReviewsListView(generics.ListAPIView):
-    serializer_class = ProductWithReviewsSerializer
+    elif request.method == "DELETE":
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def get_queryset(self):
-        return Product.objects.annotate(rating=Avg("reviews__stars"))
 
-# список категорий с количеством товаров
-class CategoryListWithCountView(generics.ListAPIView):
-    serializer_class = CategoryWithCountSerializer
+# --- Товары ---
+@api_view(["GET", "POST"])
+def product_list_create(request):
+    if request.method == "GET":
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
 
-    def get_queryset(self):
-        return Category.objects.annotate(products_count=Count("products"))
+    elif request.method == "POST":
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def product_detail(request, pk):
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+        return Response({"error": "Товар не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+
+    elif request.method == "PUT":
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == "DELETE":
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# --- Отзывы ---
+@api_view(["GET", "POST"])
+def review_list_create(request):
+    if request.method == "GET":
+        reviews = Review.objects.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+    elif request.method == "POST":
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def review_detail(request, pk):
+    try:
+        review = Review.objects.get(pk=pk)
+    except Review.DoesNotExist:
+        return Response({"error": "Отзыв не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)
+
+    elif request.method == "PUT":
+        serializer = ReviewSerializer(review, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == "DELETE":
+        review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
