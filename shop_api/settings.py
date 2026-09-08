@@ -16,7 +16,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+
+    # твои приложения
     'product',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +53,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'shop_api.wsgi.application'
 
 DATABASES = {
-    'default': {   # ← тут кавычка и двоеточие обязательны!
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
@@ -71,3 +74,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# кастомная модель пользователя
+AUTH_USER_MODEL = "users.User"
