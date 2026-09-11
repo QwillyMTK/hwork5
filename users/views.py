@@ -10,7 +10,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoginView(APIView):
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
@@ -19,7 +19,7 @@ class LoginView(APIView):
 
 
 class ConfirmView(APIView):
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         serializer = ConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
