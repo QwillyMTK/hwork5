@@ -86,3 +86,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # кастомная модель пользователя
 AUTH_USER_MODEL = "users.User"
+
+SIMPLE_JWT = {
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}

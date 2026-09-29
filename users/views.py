@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import login
 from .serializers import RegisterSerializer, LoginSerializer, ConfirmSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .tokens import CustomTokenObtainPairSerializer
 
 
 class RegisterView(generics.CreateAPIView):
@@ -27,3 +29,8 @@ class ConfirmView(APIView):
         user.confirm_code = None
         user.save()
         return Response({"message": "Аккаунт подтверждён!"}, status=status.HTTP_200_OK)
+
+
+# JWT токен с birthdate
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
